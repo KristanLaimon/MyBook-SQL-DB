@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/MYBOOK_CreateDb_Updated.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/KLDBSqlite.sql" dialect="SQLite" />
+    <file url="file://$PROJECT_DIR$/OLD/Local Sql Server Krs/Old/MyBook_Kristn_Querys.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/Local Sql Server Krs/help.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/SAVEDB/Enfermedades.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/SAVEDB/HistorialPedido.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/SAVEDB/Pedidos.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/SAVEDB/Sensibilidad.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/SAVEDB/Servicio.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/SAVEDB/Servicio_InsertingVaccinesAndNewServicesSound.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/SAVEDB/Servicio_Special.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/OLD/SAVEDB/Síntomas.sql" dialect="TSQL" />
+  </component>
+</project>

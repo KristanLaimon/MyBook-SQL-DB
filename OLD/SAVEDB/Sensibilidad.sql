@@ -1,0 +1,35 @@
+-- Easy debugging
+select *
+from Sensibilidad;
+
+select *
+from RazaSensibilidad;
+
+select *
+from SensibilidadEspecie;
+
+select *
+from Raza;
+
+select *
+from Especie;
+
+-- =====================  Normal debugging ============================
+select *
+from Sensibilidad s
+where s.ID in (select max(s2.ID) from Sensibilidad s2);
+
+--List all the breeds associated with the latest sensibility
+select r.Nombre, s.Nombre
+from Raza r
+join RazaSensibilidad rs on r.ID = rs.RazaID
+join Sensibilidad s on rs.SensibilidadID = s.ID
+where s.ID in (select max(s2.ID) from Sensibilidad s2);
+
+--List all the species associated with the latest sensibility
+select e.Nombre, s.Nombre
+from Especie e
+join SensibilidadEspecie se on e.ID = se.EspecieID
+join Sensibilidad s on se.SensibilidadID = s.ID
+where s.ID in (select max(s2.ID) from Sensibilidad s2);
+
