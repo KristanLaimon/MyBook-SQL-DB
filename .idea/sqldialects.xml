@@ -5,5 +5,6 @@
     <file url="file://$PROJECT_DIR$/MYBOOK_DELETE.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/MYBOOK_INSERT.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/MYBOOK_STORED_PROCEDURES.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Testing/Stored_Procedures.test.sql" dialect="TSQL" />
   </component>
 </project>
