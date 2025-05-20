@@ -1,4 +1,5 @@
 ﻿
+
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'MYBOOK')
   BEGIN
       CREATE DATABASE MYBOOK;

@@ -1,3 +1,5 @@
+
+
 use MYBOOK;
 
 drop procedure if exists Suscriptions_Insert; go
@@ -45,7 +47,7 @@ begin
     begin catch
         print 'Roles_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + @ID + ',' + @Name + ',' + convert(varchar(10), @Priority);
     end catch
-end
+end go;
 
 drop procedure if exists Languages_Insert; go
 create procedure Languages_Insert(
@@ -62,7 +64,7 @@ begin
 
 end go;
 
-drop procedure if exists Users_Insert;
+drop procedure if exists Users_Insert; go;
 create procedure Users_Insert(
     @Name varchar(20),
     @PasswordHash char(64),
@@ -155,7 +157,7 @@ begin
     begin catch
         print 'Communities_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @BookID) + ',' + convert(varchar(10), @UserAuthorID) + ',' + @Title + ',' + @Description;
     end catch
-end
+end go;
 
 drop procedure if exists Book_User_Shelve_Insert; go
 create procedure  Book_User_Shelve_Insert(
@@ -247,3 +249,4 @@ begin
     end catch
 end go;
 
+select * from sys.procedures;

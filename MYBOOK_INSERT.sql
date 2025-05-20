@@ -1,3 +1,5 @@
+
+
 use MYBOOK;
 
 INSERT INTO Roles (ID, Name, Priority) VALUES ('AD', 'Administrator', 1);
