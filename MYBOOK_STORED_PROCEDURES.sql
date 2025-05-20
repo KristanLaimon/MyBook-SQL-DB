@@ -123,3 +123,127 @@ begin
     end catch
 end go
 
+drop procedure if exists User_User_Suscribe_Insert; go;
+create procedure User_User_Suscribe_Insert(
+    @SuscriberID int,
+    @SuscribedToID int,
+    @SuscriptionDate datetime2
+)as
+begin
+    begin try
+        insert into User_User_Suscribe (SuscriberID, SuscribedToID, SuscriptionDate)
+        values (@SuscribedToID, @SuscriberID, @SuscriptionDate);
+    end try
+    begin catch
+        print 'User_User_Suscribe_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @SuscriberID) + ',' + convert(varchar(10), @SuscribedToID) + ',' + convert(varchar(30), @SuscriptionDate, 120);
+    end catch
+end go;
+
+
+drop procedure if exists Communities_Insert; go;
+create procedure Communities_Insert(
+    @BookID int,
+    @UserAuthorID int,
+    @Title varchar(30),
+    @Description varchar(250)
+)as
+begin
+    begin try
+        insert into Communities (BookID, UserAuthorID, Title, Description)
+        values (@BookID, @UserAuthorID, @Title, @Description)
+    end try
+    begin catch
+        print 'Communities_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @BookID) + ',' + convert(varchar(10), @UserAuthorID) + ',' + @Title + ',' + @Description;
+    end catch
+end
+
+drop procedure if exists Book_User_Shelve_Insert; go
+create procedure  Book_User_Shelve_Insert(
+    @BookID int,
+    @UserID int,
+    @IsFavorite bit,
+    @ShelvedDate datetime2
+) as
+begin
+    begin try
+        insert into Book_User_Shelve (BookID, UserID, IsFavorite, ShelvedDate)
+        values (@BookID, @UserID, @IsFavorite, @ShelvedDate);
+    end try
+    begin catch
+        print 'Book_User_Shelve_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @BookID) + ',' + convert(varchar(10), @UserID) + ',' + convert(varchar(10), @IsFavorite) + ',' + convert(varchar(30), @ShelvedDate, 120);
+    end catch
+end go;
+
+drop procedure if exists Posts_Insert; go
+create procedure  Posts_Insert(
+--     @ID int,
+    @DatePosted datetime2,
+    @UserPosterID int,
+    @CommunityID int,
+    @Content varchar(255),
+    @Title varchar(30)
+) as
+begin
+    begin try
+--         Note: ID is IDENTITY (autoincrement)
+        insert into Posts (DatePosted, UserPosterID, CommunityID, Content, Title)
+        values (@DatePosted, @UserPosterID, @CommunityID, @Content, @Title);
+    end try
+    begin catch
+        print 'Posts_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(30), @DatePosted, 120) + ',' + convert(varchar(10), @UserPosterID) + ',' + convert(varchar(10), @CommunityID) + ',' + @Content + ',' + @Title;
+    end catch
+end go;
+
+
+
+drop procedure if exists Book_User_Reads_Insert; go
+create procedure Book_User_Reads_Insert(
+    @BookID int,
+    @UserID int,
+    @ReadTimeMiliseconds bigint,
+    @ReadDate datetime2
+) as
+begin
+    begin try
+        insert into Book_User_Reads (BookID, UserID, ReadTimeMiliseconds, ReadDate)
+        values (@BookID, @UserID, @ReadTimeMiliseconds, @ReadDate)
+    end try
+    begin catch
+        print 'Book_User_Reads_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @BookID) + ',' + convert(varchar(10), @UserID) + ',' + convert(varchar(20), @ReadTimeMiliseconds) + ',' + convert(varchar(30), @ReadDate, 120);
+    end catch
+end go;
+
+drop procedure if exists Comment_Insert; go
+create procedure  Comment_Insert(
+--     @ID int (is autoincremental by default
+    @UserID int,
+    @Content varchar(400),
+    @PostID int,
+    @ParentCommentID int
+) as
+begin
+    begin try
+        insert into Comment (UserID, PostID, Content, ParentCommentID)
+        values (@UserID, @PostID, @Content, @ParentCommentID);
+    end try
+    begin catch
+        print 'Comment_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @UserID) + ',' + convert(varchar(10), @PostID) + ',' + @Content + ',' + convert(varchar(10), @ParentCommentID);
+    end catch
+end go;
+
+drop procedure if exists User_Community_Follow_Insert; go
+create procedure User_Community_Follow_Insert(
+    @UserID int,
+    @CommunityID int,
+    @FollowedDate datetime2
+) as
+begin
+    begin try
+        insert into User_Community_Follow (UserID, CommunityID, FollowedDate)
+        values (@UserID, @CommunityID, @FollowedDate);
+    end try
+    begin catch
+        print 'User_Community_Follow_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @UserID) + ',' + convert(varchar(10), @CommunityID) + ',' + convert(varchar(30), @FollowedDate, 120);
+    end catch
+end go;
+
