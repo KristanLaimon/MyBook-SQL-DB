@@ -15,16 +15,25 @@ use master;
     exec sp_restore_mybook @point_in_time = '2025-05-21 15:30:00';
 use mybook;
 
+-- Prueba: Borrado y restauración
+use mybook;
+    select count(*) from  Orders_Book_Have;
+    delete from Orders_Book_Have;
+    select count(*) from  Orders_Book_Have;
+use master;
+    exec sp_restore_mybook @point_in_time = '2025-05-21 15:30:00';
+use mybook;
+    select count(*) from  Orders_Book_Have;
+
 -- Extra: Descomentar esto para limpiar backups viejos
-    -- exec  sp_Cleanup_Backups;
+-- exec  sp_Cleanup_Backups;
 
 -- Extra: Descomentar esto para borrar todos los backups física y lógicamente en la db
-    -- use master;
-    --     exec sp_delete_all_backups @database_name = 'mybook'
-    -- use mybook;
-
+-- use master;
+--     exec sp_delete_all_backups @database_name = 'mybook'
+-- use mybook;
 
 -- Extra: Descomentar esto y usar un log especifico para ver su información
-    -- restore headeronly
-    -- from disk = 'C:\Backups\MYBOOK\MYBOOK_Log_20250521_145722.trn';
+-- restore headeronly
+-- from disk = 'C:\Backups\MYBOOK\MYBOOK_Log_20250521_145722.trn';
 
