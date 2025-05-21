@@ -7,18 +7,18 @@ GO
 ALTER DATABASE MYBOOK SET RECOVERY FULL;
 GO
 
--- Crear directorio de respaldos (asegúrate de que exista en el servidor)
+-- Crear directorio de respaldos (asegurarse de que exista en el servidor)
 -- Ejemplo: C:\Backups\MYBOOK\
--- Nota: El directorio debe crearse manualmente con permisos adecuados
+-- Nota: El directorio debe crearse manualmente con los permisos adecuados (te estoy observando linux ehh!)
 
--- Procedimiento para Respaldo Completo
+-- 1. Procedimiento para Respaldo Completo
 drop procedure if exists sp_Backup_Full; go
 CREATE PROCEDURE sp_Backup_Full
 AS
 BEGIN
     -- Notas con respecto a los formatos:
     -- 120 format produces: YYYY-MM-DD HH:MM:SS
-    -- 112 format produces: YYYY-MM-DD
+    -- 112 format produces: YYYYMMDD
     -- 108 format produces: HH:MM:SS
 
     DECLARE @BackupPath NVARCHAR(256);
@@ -38,7 +38,7 @@ BEGIN
         BACKUP DATABASE MYBOOK
             TO DISK = @BackupPath
             WITH INIT,
-            COMPRESSION,
+--             COMPRESSION, Esto no se puede realizar en la versión EXPRESS
             NAME = @BackupName,
             STATS = 10;
 
@@ -74,7 +74,7 @@ BEGIN
             TO DISK = @BackupPath
             WITH DIFFERENTIAL,
             INIT,
-            COMPRESSION,
+--             COMPRESSION, Esto no se puede en la versión EXPRESS...
             NAME = @BackupName,
             STATS = 10;
 
@@ -109,7 +109,7 @@ BEGIN
         BACKUP LOG MYBOOK
             TO DISK = @BackupPath
             WITH INIT,
-            COMPRESSION,
+--             COMPRESSION, Esto no se puede en la versión EXPRESS...
             NAME = @BackupName,
             STATS = 10;
 
@@ -125,11 +125,25 @@ BEGIN
 END;
 GO
 
+-- Habilita el permiso para ejecutar comandos SQL y borrado de archivos.
+EXEC sp_configure 'show advanced options', 1;
+RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 1;
+RECONFIGURE;
+
 -- Procedimiento para Limpieza de Respaldos Antiguos
+-- 1. Borrar respaldos completos mayores a 4 semanas
+-- 2. Borrar respaldos diferenciales mayor a 1 semana
+-- 3. borrar respaldos de log mayor a 1 día
 drop procedure if exists sp_Cleanup_Backups; go
 CREATE PROCEDURE sp_Cleanup_Backups
 AS
 BEGIN
+    -- Notas con respecto a los formatos:
+    -- 120 format produces: YYYY-MM-DD HH:MM:SS
+    -- 112 format produces: YYYYMMDD
+    -- 108 format produces: HH:MM:SS
+
     DECLARE @DeleteDate NVARCHAR(20);
     DECLARE @Command NVARCHAR(4000);
     DECLARE @ErrorMsg NVARCHAR(4000);
@@ -176,54 +190,96 @@ BEGIN
 END;
 GO
 
--- Procedimiento de Ejemplo para Restauración a un Punto en el Tiempo
-drop procedure if exists sp_Restore_MYBOOK; go;
-CREATE PROCEDURE sp_Restore_MYBOOK
-    @PointInTime DATETIME2,
-    @FullBackupPath NVARCHAR(256),
-    @DiffBackupPath NVARCHAR(256) = NULL,
-    @LogBackupPath NVARCHAR(256) = NULL
-AS
-BEGIN
-    DECLARE @ErrorMsg NVARCHAR(4000);
 
-    BEGIN TRY
-        -- Poner la base de datos en modo RESTORE
-        ALTER DATABASE MYBOOK SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+drop procedure if exists sp_restore_mybook;
+go
+create procedure sp_restore_mybook
+@point_in_time datetime2
+as
+begin
+    set nocount on;
 
-        -- Restaurar respaldo completo
-        RESTORE DATABASE MYBOOK
-            FROM DISK = @FullBackupPath
-            WITH NORECOVERY;
+    declare @error_msg nvarchar(4000);
+    declare @full_backup_path nvarchar(256);
+    declare @diff_backup_path nvarchar(256);
+    declare @log_backup_path nvarchar(256);
+    declare @backup_set_id int;
 
-        -- Restaurar respaldo diferencial (si se proporciona)
-        IF @DiffBackupPath IS NOT NULL
-            BEGIN
-                RESTORE DATABASE MYBOOK
-                    FROM DISK = @DiffBackupPath
-                    WITH NORECOVERY;
-            END
+    begin try
+        -- find latest full backup
+        select top 1
+            @full_backup_path = bmf.physical_device_name,
+            @backup_set_id = bs.backup_set_id
+        from msdb.dbo.backupset bs
+                 join msdb.dbo.backupmediafamily bmf on bs.media_set_id = bmf.media_set_id
+        where bs.database_name = 'mybook'
+          and bs.type = 'D'
+        order by bs.backup_finish_date desc;
 
-        -- Restaurar logs de transacciones hasta el punto en el tiempo (si se proporciona)
-        IF @LogBackupPath IS NOT NULL
-            BEGIN
-                RESTORE LOG MYBOOK
-                    FROM DISK = @LogBackupPath
-                    WITH STOPAT = @PointInTime, NORECOVERY;
-            END
+        if @full_backup_path is null
+            throw 50000, 'no full backup found for mybook.', 1;
 
-        -- Finalizar restauración
-        RESTORE DATABASE MYBOOK WITH RECOVERY;
-        ALTER DATABASE MYBOOK SET MULTI_USER;
+        -- find latest diff backup *after* full
+        select top 1
+            @diff_backup_path = bmf.physical_device_name
+        from msdb.dbo.backupset bs
+                 join msdb.dbo.backupmediafamily bmf on bs.media_set_id = bmf.media_set_id
+        where bs.database_name = 'mybook'
+          and bs.type = 'I'
+          and bs.backup_start_date > (
+            select backup_finish_date
+            from msdb.dbo.backupset
+            where backup_set_id = @backup_set_id
+        )
+        order by bs.backup_finish_date desc;
 
-        PRINT 'Base de datos MYBOOK restaurada exitosamente al punto: ' + CONVERT(NVARCHAR(20), @PointInTime, 120);
-    END TRY
-    BEGIN CATCH
-        SELECT @ErrorMsg = ERROR_MESSAGE();
-        PRINT 'Error en sp_Restore_MYBOOK: ' + @ErrorMsg;
-        -- Revertir al modo multiusuario en caso de error
-        ALTER DATABASE MYBOOK SET MULTI_USER;
-        THROW;
-    END CATCH
-END;
-GO
+        -- find the latest transaction log that includes the point in time
+        select top 1
+            @log_backup_path = bmf.physical_device_name
+        from msdb.dbo.backupset bs
+                 join msdb.dbo.backupmediafamily bmf on bs.media_set_id = bmf.media_set_id
+        where bs.database_name = 'mybook'
+          and bs.type = 'L'
+          and @point_in_time between bs.backup_start_date and bs.backup_finish_date
+        order by bs.backup_finish_date desc;
+
+        -- set single user
+        alter database mybook set single_user with rollback immediate;
+
+        -- restore full
+        restore database mybook
+            from disk = @full_backup_path
+            with norecovery, replace;
+
+        -- restore diff
+        if @diff_backup_path is not null
+            begin
+                restore database mybook
+                    from disk = @diff_backup_path
+                    with norecovery, replace;
+            end
+
+        -- restore log if applicable
+        if @log_backup_path is not null
+            begin
+                restore log mybook
+                    from disk = @log_backup_path
+                    with stopat = @point_in_time, norecovery;
+            end
+
+        -- finish
+        restore database mybook with recovery;
+        alter database mybook set multi_user;
+
+        print 'database mybook successfully restored to point: ' + convert(nvarchar(20), @point_in_time, 120);
+    end try
+    begin catch
+        select @error_msg = error_message();
+        print 'error in sp_restore_mybook: ' + @error_msg;
+        alter database mybook set multi_user;
+        throw;
+    end catch
+end;
+go
+
+exec sp_restore_mybook @point_in_time = '2025-05-21 13:40:00';
