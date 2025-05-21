@@ -19,3 +19,5 @@ go;
 select *
 from sys.indexes
 where object_id = object_id('Book_User_Reads');
+
+-- select @@VERSION as SQLServerVersion;

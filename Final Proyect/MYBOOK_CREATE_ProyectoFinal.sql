@@ -16,6 +16,28 @@ create table Orders(
 create nonclustered index NON_IDX_Orders_OrderDate on Orders(OrderDate);
 create nonclustered columnstore index NON_CLU_Orders_Total on Orders(Total);
 
+drop procedure if exists Orders_Insert; go
+create procedure Orders_Insert(
+    @UserID int,
+    @OrderDate datetime2,
+    @Status varchar(20),
+    @Total decimal (10,2)
+) as
+begin
+    begin try
+        insert into Orders (UserID, OrderDate, Status, Total) values (@UserID, @OrderDate, @Status, @Total);
+    end try
+    begin catch
+        declare @ErrorMsg nvarchar(4000);
+        select @ErrorMsg = error_message();
+        print 'Orders_Insert | ERROR | MSG: ' + @ErrorMsg + ' | Values: '
+            + cast(@UserID as varchar(10)) + ', '
+            + cast(@OrderDate as varchar(10)) + ', '
+            + @Status + ', '
+            + cast(@Total as varchar(10));
+    end catch
+end go;
+
 create table Orders_Book_Have(
     OrderID int not null,
     BookID int not null,
@@ -30,9 +52,28 @@ create nonclustered index NON_IDX_OrdersBookHave_OrderID on Orders_Book_Have(Ord
 create nonclustered index NON_IDX_OrdersBookHave_BookID on Orders_Book_Have(BookID);
 create nonclustered columnstore index NON_CLU_OrdersBookHave_Quantity on Orders_Book_Have(Quantity);
 
+drop procedure if exists Orders_Book_Have_Insert; go
+create procedure Orders_Book_Have_Insert(
+    @OrderID int,
+    @BookID int,
+    @Quantity int
+) as
+begin
+    begin try
+        insert into Orders_Book_Have (OrderID, BookID, Quantity) values (@OrderID, @BookID, @Quantity);
+    end try
+    begin catch
+        declare @ErrorMsg nvarchar(4000);
+        select @ErrorMsg = error_message();
+        print 'Orders_Book_Have_Insert | ERROR | MSG: ' + @ErrorMsg + ' | Values: '
+            + cast(@OrderID as varchar(10)) + ', '
+            + cast(@BookID as varchar(10)) + ', '
+            + cast(@Quantity as varchar(10));
+    end catch
+end go;
+
 drop view if exists Sales; go
 create view Sales as
 select ID as OrderInfoID, UserID, OrderDate, Total
 from Orders o
 where status = 'paid';
-
