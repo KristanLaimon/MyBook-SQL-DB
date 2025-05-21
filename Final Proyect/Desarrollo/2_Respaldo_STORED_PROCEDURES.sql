@@ -199,6 +199,7 @@ as
 begin
     set nocount on;
 
+    -- variables locales
     declare @error_msg nvarchar(4000);
     declare @full_backup_path nvarchar(256);
     declare @diff_backup_path nvarchar(256);
@@ -206,26 +207,31 @@ begin
     declare @backup_set_id int;
 
     begin try
-        -- find latest full backup
+        -- 1. RESPALDO COMPLETO: Encontrar el respaldo completo más reciente
         select top 1
             @full_backup_path = bmf.physical_device_name,
             @backup_set_id = bs.backup_set_id
         from msdb.dbo.backupset bs
                  join msdb.dbo.backupmediafamily bmf on bs.media_set_id = bmf.media_set_id
         where bs.database_name = 'mybook'
-          and bs.type = 'D'
+          -- Opciones disponibles:
+              -- 'D' = Full (Database)
+              -- 'I' = Differential
+              -- 'L' = Transaction Log
+        and bs.type = 'D' -- full backup
         order by bs.backup_finish_date desc;
 
         if @full_backup_path is null
-            throw 50000, 'no full backup found for mybook.', 1;
+            throw 50000, N'no se encontró respaldo completo para mybook.', 1;
 
-        -- find latest diff backup *after* full
+        -- 2. RESPALDO DIFERENCIAL: Encontrar el respaldo diferencial más reciente *después* del respaldo completo
         select top 1
             @diff_backup_path = bmf.physical_device_name
         from msdb.dbo.backupset bs
                  join msdb.dbo.backupmediafamily bmf on bs.media_set_id = bmf.media_set_id
         where bs.database_name = 'mybook'
-          and bs.type = 'I'
+          and bs.type = 'I' -- diff backup
+          -- Solo busca los que se hicieron después del backup completo que se encontró un poco más arriba
           and bs.backup_start_date > (
             select backup_finish_date
             from msdb.dbo.backupset
@@ -233,25 +239,26 @@ begin
         )
         order by bs.backup_finish_date desc;
 
-        -- find the latest transaction log that includes the point in time
+        -- 3. RESPALDO DE TRANSACCIONES: encontrar el registro de log ms reciente que incluye el punto en el tiempo
         select top 1
             @log_backup_path = bmf.physical_device_name
         from msdb.dbo.backupset bs
                  join msdb.dbo.backupmediafamily bmf on bs.media_set_id = bmf.media_set_id
         where bs.database_name = 'mybook'
-          and bs.type = 'L'
+          and bs.type = 'L' -- log backup
+          -- Buscar los logs que se encuentren dentro del rango de la fecha que recibe este procedimiento como parámetro
           and @point_in_time between bs.backup_start_date and bs.backup_finish_date
         order by bs.backup_finish_date desc;
 
-        -- set single user
+        -- poner la base de datos en modo de un solo usuario
         alter database mybook set single_user with rollback immediate;
 
-        -- restore full
+        -- restaurar el respaldo completo
         restore database mybook
             from disk = @full_backup_path
             with norecovery, replace;
 
-        -- restore diff
+        -- restaurar el respaldo diferencial si existe
         if @diff_backup_path is not null
             begin
                 restore database mybook
@@ -259,7 +266,7 @@ begin
                     with norecovery, replace;
             end
 
-        -- restore log if applicable
+        -- restaurar el registro de log si es aplicable
         if @log_backup_path is not null
             begin
                 restore log mybook
@@ -267,19 +274,60 @@ begin
                     with stopat = @point_in_time, norecovery;
             end
 
-        -- finish
+        -- terminar
         restore database mybook with recovery;
         alter database mybook set multi_user;
 
-        print 'database mybook successfully restored to point: ' + convert(nvarchar(20), @point_in_time, 120);
+        print N'Base de datos MYBOOK restaurada con éxito al punto: ' + convert(nvarchar(20), @point_in_time, 120);
     end try
     begin catch
         select @error_msg = error_message();
-        print 'error in sp_restore_mybook: ' + @error_msg;
+        print 'Error en sp_restore_mybook: ' + @error_msg;
         alter database mybook set multi_user;
         throw;
     end catch
 end;
 go
 
-exec sp_restore_mybook @point_in_time = '2025-05-21 13:40:00';
+
+drop procedure if exists sp_delete_all_backups;
+go
+create procedure sp_delete_all_backups
+@database_name sysname
+as
+begin
+    set nocount on;
+
+    declare @backup_file nvarchar(4000);
+    declare @cmd nvarchar(4000);
+
+    -- cursor to loop through all backup files for the database
+    declare backup_cursor cursor for
+        select bmf.physical_device_name
+        from msdb.dbo.backupset bs
+                 join msdb.dbo.backupmediafamily bmf on bs.media_set_id = bmf.media_set_id
+        where bs.database_name = @database_name;
+
+    open backup_cursor;
+    fetch next from backup_cursor into @backup_file;
+
+    while @@fetch_status = 0
+        begin
+            -- delete the physical file
+            set @cmd = 'del "' + @backup_file + '"';
+            exec xp_cmdshell @cmd, no_output;
+
+            fetch next from backup_cursor into @backup_file;
+        end
+
+    close backup_cursor;
+    deallocate backup_cursor;
+
+    -- delete backup history from msdb
+    exec msdb.dbo.sp_delete_database_backuphistory @database_name;
+
+    print 'All backup files and history for database "' + @database_name + '" have been deleted.';
+end;
+go
+
+

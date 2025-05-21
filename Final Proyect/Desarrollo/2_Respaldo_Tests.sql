@@ -12,10 +12,17 @@ exec sp_Backup_Differential
 
 -- 4. Restaurar utilizando los respaldos más recientes a una hora especifica (gracias a los LOGS)
 use master;
-    exec sp_restore_mybook @point_in_time = '2025-05-21 13:40:00';
+    exec sp_restore_mybook @point_in_time = '2025-05-21 15:30:00';
 use mybook;
 
-exec  sp_Cleanup_Backups;
+-- Extra: Descomentar esto para limpiar backups viejos
+    -- exec  sp_Cleanup_Backups;
+
+-- Extra: Descomentar esto para borrar todos los backups física y lógicamente en la db
+    -- use master;
+    --     exec sp_delete_all_backups @database_name = 'mybook'
+    -- use mybook;
+
 
 -- Extra: Descomentar esto y usar un log especifico para ver su información
     -- restore headeronly
