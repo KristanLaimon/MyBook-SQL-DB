@@ -1,0 +1,1 @@
+EXEC xp_servicecontrol 'QUERYSTATE', 'SQLServerAgent';

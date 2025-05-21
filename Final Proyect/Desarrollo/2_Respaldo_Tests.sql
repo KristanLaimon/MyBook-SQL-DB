@@ -1,4 +1,5 @@
 
+-- ============================= Pruebas: 2_Respaldo_STORED_PROCEDURES ===============================
 use MYBOOK;
 
 -- 1. CREAR UN RESPALDO COMPLETO (con fecha actual)
@@ -36,4 +37,26 @@ use mybook;
 -- Extra: Descomentar esto y usar un log especifico para ver su información
 -- restore headeronly
 -- from disk = 'C:\Backups\MYBOOK\MYBOOK_Log_20250521_145722.trn';
+
+
+-- ============================= Pruebas: 2_Respaldo_Automatización ===============================
+use mybook;
+-- Para checar  si está activo el server agente (el que ejecuta los jobs con sus schedules)
+EXEC xp_servicecontrol 'QUERYSTATE', 'SQLServerAgent';
+
+-- Con esto se inicia un job (testeo)
+EXEC msdb.dbo.sp_start_job @job_name = N'Backup_Full_Weekly';
+
+
+-- Get latest 10 job runs (customize as needed)
+SELECT TOP 10
+    j.name AS JobName,
+    h.run_date,
+    h.run_time,
+    h.run_duration,
+    h.message
+FROM msdb.dbo.sysjobs j
+         JOIN msdb.dbo.sysjobhistory h ON j.job_id = h.job_id
+WHERE j.name = 'Backup_Full_Weekly'
+ORDER BY h.run_date DESC, h.run_time DESC;
 

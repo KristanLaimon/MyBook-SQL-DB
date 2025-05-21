@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/Diagrams/Playground.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/1_Indexes.sql" dialect="TSQL" />
-    <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/2_Respaldo_HOW_TO_USE.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/2_Respaldo_Automatizacion.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/2_Respaldo_STORED_PROCEDURES.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/2_Respaldo_Tests.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/3_Auditoria.sql" dialect="TSQL" />
@@ -14,5 +15,8 @@
     <file url="file://$PROJECT_DIR$/MYBOOK_INSERT.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/MYBOOK_STORED_PROCEDURES.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Stored_Procedures.test.sql" dialect="TSQL" />
+  </component>
+  <component name="SqlResolveMappings">
+    <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/2_Respaldo_Tests.sql" scope="{&quot;node&quot;:{  &quot;@negative&quot;:&quot;1&quot;,  &quot;group&quot;:{   &quot;@kind&quot;:&quot;root&quot;,   &quot;node&quot;:{    &quot;@negative&quot;:&quot;1&quot;   }  } }}" />
   </component>
 </project>
