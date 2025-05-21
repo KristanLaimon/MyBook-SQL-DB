@@ -1,3 +1,5 @@
+
+
 use MYBOOK;
 
 create table Orders(
@@ -12,7 +14,7 @@ create table Orders(
     constraint Check_Orders_Status_MustBeInEnum check(Status in ('pending', 'paid', 'cancelled'))
 ); go
 create nonclustered index NON_IDX_Orders_OrderDate on Orders(OrderDate);
-
+create nonclustered columnstore index NON_CLU_Orders_Total on Orders(Total);
 
 create table Orders_Book_Have(
     OrderID int not null,
@@ -26,8 +28,9 @@ create table Orders_Book_Have(
 ); go
 create nonclustered index NON_IDX_OrdersBookHave_OrderID on Orders_Book_Have(OrderID);
 create nonclustered index NON_IDX_OrdersBookHave_BookID on Orders_Book_Have(BookID);
+create nonclustered columnstore index NON_CLU_OrdersBookHave_Quantity on Orders_Book_Have(Quantity);
 
-drop view if exists Sales;
+drop view if exists Sales; go
 create view Sales as
 select ID as OrderInfoID, UserID, OrderDate, Total
 from Orders o

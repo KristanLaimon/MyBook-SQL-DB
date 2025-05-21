@@ -2,6 +2,7 @@
 
 use MYBOOK;
 
+select * from Orders;
 
 -- Good query
 select * from Orders_Book_Have obh
@@ -15,7 +16,6 @@ select distinct ID from Users;
 
 -- TO CHECK ALL INDEXES FROM A TABLE
 go;
-declare @tableName varchar(20) = 'Orders'
 select *
 from sys.indexes
-where object_id = object_id(@tableName);
+where object_id = object_id('Book_User_Reads');
