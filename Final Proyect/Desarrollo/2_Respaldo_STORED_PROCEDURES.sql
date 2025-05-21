@@ -1,3 +1,5 @@
+
+
 USE master;
 GO
 
@@ -10,19 +12,25 @@ GO
 -- Nota: El directorio debe crearse manualmente con permisos adecuados
 
 -- Procedimiento para Respaldo Completo
-IF OBJECT_ID('sp_Backup_Full', 'P') IS NOT NULL
-    DROP PROCEDURE sp_Backup_Full;
-GO
+drop procedure if exists sp_Backup_Full; go
 CREATE PROCEDURE sp_Backup_Full
 AS
 BEGIN
+    -- Notas con respecto a los formatos:
+    -- 120 format produces: YYYY-MM-DD HH:MM:SS
+    -- 112 format produces: YYYY-MM-DD
+    -- 108 format produces: HH:MM:SS
+
     DECLARE @BackupPath NVARCHAR(256);
     DECLARE @BackupName NVARCHAR(256);
     DECLARE @ErrorMsg NVARCHAR(4000);
 
+    -- Example: C:\Backups\MYBOOK\MYBOOK_Full_20220121_143000.bak
     SET @BackupPath = N'C:\Backups\MYBOOK\MYBOOK_Full_' +
                       CONVERT(NVARCHAR(20), GETDATE(), 112) + '_' +
                       REPLACE(CONVERT(NVARCHAR(20), GETDATE(), 108), ':', '') + '.bak';
+
+    -- Example: MYBOOK Full Backup - 2022-01-21 14:30:00
     SET @BackupName = N'MYBOOK Full Backup - ' + CONVERT(NVARCHAR(20), GETDATE(), 120);
 
     BEGIN TRY
@@ -47,9 +55,7 @@ END;
 GO
 
 -- Procedimiento para Respaldo Diferencial
-IF OBJECT_ID('sp_Backup_Differential', 'P') IS NOT NULL
-    DROP PROCEDURE sp_Backup_Differential;
-GO
+drop procedure if exists sp_Backup_Differential; go
 CREATE PROCEDURE sp_Backup_Differential
 AS
 BEGIN
@@ -58,8 +64,8 @@ BEGIN
     DECLARE @ErrorMsg NVARCHAR(4000);
 
     SET @BackupPath = N'C:\Backups\MYBOOK\MYBOOK_Diff_' +
-                      CONVERT(NVARCHAR(20), GETDATE(), 112) + '_' +
-                      REPLACE(CONVERT(NVARCHAR(20), GETDATE(), 108), ':', '') + '.bak';
+                      CONVERT(NVARCHAR(20), GETDATE(), 112) + '_' + -- Full date without time format: From 2022-01-01 to 20220101 !
+                      REPLACE(CONVERT(NVARCHAR(20), GETDATE(), 108), ':', '') + '.bak'; -- Time in 24 hours format: From 14:00 to 1400 !
     SET @BackupName = N'MYBOOK Differential Backup - ' + CONVERT(NVARCHAR(20), GETDATE(), 120);
 
     BEGIN TRY
@@ -85,9 +91,7 @@ END;
 GO
 
 -- Procedimiento para Respaldo del Log de Transacciones
-IF OBJECT_ID('sp_Backup_Log', 'P') IS NOT NULL
-    DROP PROCEDURE sp_Backup_Log;
-GO
+drop procedure if exists sp_Backup_Log; go
 CREATE PROCEDURE sp_Backup_Log
 AS
 BEGIN
@@ -122,9 +126,7 @@ END;
 GO
 
 -- Procedimiento para Limpieza de Respaldos Antiguos
-IF OBJECT_ID('sp_Cleanup_Backups', 'P') IS NOT NULL
-    DROP PROCEDURE sp_Cleanup_Backups;
-GO
+drop procedure if exists sp_Cleanup_Backups; go
 CREATE PROCEDURE sp_Cleanup_Backups
 AS
 BEGIN
@@ -135,6 +137,7 @@ BEGIN
     -- Eliminar respaldos completos mayores a 4 semanas
     SET @DeleteDate = CONVERT(NVARCHAR(20), DATEADD(WEEK, -4, GETDATE()), 112);
     SET @Command = 'EXEC xp_cmdshell ''del C:\Backups\MYBOOK\MYBOOK_Full_' + @DeleteDate + '*.bak''';
+    -- Ejemplo: EXEC xp_cmdshell 'del C:\Backups\MYBOOK\MYBOOK_Full_20250423*.bak'
 
     BEGIN TRY
         EXEC sp_executesql @Command;
@@ -174,9 +177,7 @@ END;
 GO
 
 -- Procedimiento de Ejemplo para Restauración a un Punto en el Tiempo
-IF OBJECT_ID('sp_Restore_MYBOOK', 'P') IS NOT NULL
-    DROP PROCEDURE sp_Restore_MYBOOK;
-GO
+drop procedure if exists sp_Restore_MYBOOK; go;
 CREATE PROCEDURE sp_Restore_MYBOOK
     @PointInTime DATETIME2,
     @FullBackupPath NVARCHAR(256),
@@ -225,98 +226,4 @@ BEGIN
         THROW;
     END CATCH
 END;
-GO
-
--- Ejemplo de Programación de Respaldos con SQL Server Agent
--- Nota: Estos comandos deben ejecutarse en SQL Server Management Studio o similar
--- para configurar los trabajos en SQL Server Agent.
-
--- Job 1: Respaldo Completo (Domingos a las 2:00 AM)
-USE msdb;
-GO
-EXEC dbo.sp_add_job
-     @job_name = N'MYBOOK_Full_Backup_Weekly';
-GO
-EXEC dbo.sp_add_jobstep
-     @job_name = N'MYBOOK_Full_Backup_Weekly',
-     @step_name = N'Execute Full Backup',
-     @subsystem = N'TSQL',
-     @command = N'EXEC sp_Backup_Full',
-     @database_name = N'master';
-GO
-EXEC dbo.sp_add_jobschedule
-     @job_name = N'MYBOOK_Full_Backup_Weekly',
-     @name = N'Weekly_Sunday_2AM',
-     @freq_type = 8, -- Semanal
-     @freq_interval = 1, -- Domingo
-     @active_start_time = 20000; -- 2:00 AM
-GO
-EXEC dbo.sp_add_jobserver
-     @job_name = N'MYBOOK_Full_Backup_Weekly';
-GO
-
--- Job 2: Respaldo Diferencial (Diario, excepto domingos, a las 10:00 PM)
-EXEC dbo.sp_add_job
-     @job_name = N'MYBOOK_Differential_Backup_Daily';
-GO
-EXEC dbo.sp_add_jobstep
-     @job_name = N'MYBOOK_Differential_Backup_Daily',
-     @step_name = N'Execute Differential Backup',
-     @subsystem = N'TSQL',
-     @command = N'EXEC sp_Backup_Differential',
-     @database_name = N'master';
-GO
-EXEC dbo.sp_add_jobschedule
-     @job_name = N'MYBOOK_Differential_Backup_Daily',
-     @name = N'Daily_Except_Sunday_10PM',
-     @freq_type = 8, -- Semanal
-     @freq_interval = 62, -- Lunes a Sábado (2+4+8+16+32)
-     @active_start_time = 220000; -- 10:00 PM
-GO
-EXEC dbo.sp_add_jobserver
-     @job_name = N'MYBOOK_Differential_Backup_Daily';
-GO
-
--- Job 3: Respaldo del Log de Transacciones (Cada hora)
-EXEC dbo.sp_add_job
-     @job_name = N'MYBOOK_Log_Backup_Hourly';
-GO
-EXEC dbo.sp_add_jobstep
-     @job_name = N'MYBOOK_Log_Backup_Hourly',
-     @step_name = N'Execute Log Backup',
-     @subsystem = N'TSQL',
-     @command = N'EXEC sp_Backup_Log',
-     @database_name = N'master';
-GO
-EXEC dbo.sp_add_jobschedule
-     @job_name = N'MYBOOK_Log_Backup_Hourly',
-     @name = N'Hourly_Every_60_Minutes',
-     @freq_type = 4, -- Diario
-     @freq_subday_type = 8, -- Cada hora
-     @freq_subday_interval = 1, -- Cada 1 hora
-     @active_start_time = 0; -- Desde medianoche
-GO
-EXEC dbo.sp_add_jobserver
-     @job_name = N'MYBOOK_Log_Backup_Hourly';
-GO
-
--- Job 4: Limpieza de Respaldos Antiguos (Diaria a las 3:00 AM)
-EXEC dbo.sp_add_job
-     @job_name = N'MYBOOK_Cleanup_Backups_Daily';
-GO
-EXEC dbo.sp_add_jobstep
-     @job_name = N'MYBOOK_Cleanup_Backups_Daily',
-     @step_name = N'Execute Cleanup Backups',
-     @subsystem = N'TSQL',
-     @command = N'EXEC sp_Cleanup_Backups',
-     @database_name = N'master';
-GO
-EXEC dbo.sp_add_jobschedule
-     @job_name = N'MYBOOK_Cleanup_Backups_Daily',
-     @name = N'Daily_3AM',
-     @freq_type = 4, -- Diario
-     @active_start_time = 30000; -- 3:00 AM
-GO
-EXEC dbo.sp_add_jobserver
-     @job_name = N'MYBOOK_Cleanup_Backups_Daily';
 GO
