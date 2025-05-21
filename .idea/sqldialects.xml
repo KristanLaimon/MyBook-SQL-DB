@@ -2,6 +2,8 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/1_Indexes.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/2_Respaldo_Recuperacion.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Final Proyect/Desarrollo/3_Auditoria.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Final Proyect/FinalProyect.test.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Final Proyect/MYBOOK_CREATE_ProyectoFinal.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Final Proyect/MYBOOK_INSERT_ProyectoFinal.sql" dialect="TSQL" />
