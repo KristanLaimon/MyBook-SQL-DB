@@ -1,3 +1,4 @@
+
 use MYBOOK;
 
 DROP TRIGGER IF EXISTS trg_UpdateStock_OnPaid

@@ -1,7 +1,10 @@
 
 
 use master;
-alter database MYBOOK set SINGLE_USER with rollback immediate;
-drop database MYBOOK;
+if exists (select * from sys.databases where name='MYBOOK')
+begin
+    alter database MYBOOK set SINGLE_USER with rollback immediate;
+    drop database MYBOOK;
+end
 
 

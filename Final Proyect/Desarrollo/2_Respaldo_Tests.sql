@@ -2,6 +2,8 @@
 -- ============================= Pruebas: 2_Respaldo_STORED_PROCEDURES ===============================
 use MYBOOK;
 
+-- nota: se tiene que crear la carpeta C:\Backups\MYBOOK
+
 -- 1. CREAR UN RESPALDO COMPLETO (con fecha actual)
 exec sp_Backup_Full
 
@@ -43,9 +45,17 @@ use mybook;
 use mybook;
 -- Para checar  si está activo el server agente (el que ejecuta los jobs con sus schedules)
 EXEC xp_servicecontrol 'QUERYSTATE', 'SQLServerAgent';
+-- Enable SQL Server Agent to activate jobs on the server
 
 -- Con esto se inicia un job (testeo)
+EXEC msdb.dbo.sp_start_job @job_name = N'Backup_Differential';
+EXEC msdb.dbo.sp_start_job @job_name = N'Backup_Logs';
 EXEC msdb.dbo.sp_start_job @job_name = N'Backup_Full_Weekly';
+
+-- Stop all current jobs
+EXEC msdb.dbo.sp_stop_job @job_name = N'Backup_Differential';
+EXEC msdb.dbo.sp_stop_job @job_name = N'Backup_Logs';
+EXEC msdb.dbo.sp_stop_job @job_name = N'Backup_Full_Weekly';
 
 
 -- Get latest 10 job runs (customize as needed)
