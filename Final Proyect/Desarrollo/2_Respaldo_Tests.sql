@@ -2,6 +2,8 @@
 -- ============================= Pruebas: 2_Respaldo_STORED_PROCEDURES ===============================
 use MYBOOK;
 
+-- nota: se tiene que crear la carpeta C:\Backups\MYBOOK
+
 -- 1. CREAR UN RESPALDO COMPLETO (con fecha actual)
 exec sp_Backup_Full
 
