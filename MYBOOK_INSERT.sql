@@ -61,14 +61,14 @@ INSERT INTO Languages (ID, Name) VALUES ('JP', 'Japanese');
 
 
 
-INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 1', 'This is a description of the book.', '9781234567890', '2025-02-09 10:00:00', 'EN', 'FA', 1);
-INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 2', 'This is a description of the book.', '9781234567891', '2005-06-15 09:00:00', 'ES', 'SF', 2);
-INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 3', 'This is a description of the book.', '9781234567892', '2010-11-22 10:00:00', 'FR', 'MY', 3);
-INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 4', 'This is a description of the book.', '9781234567893', '2018-01-01 08:00:00', 'DE', 'RO', 4);
-INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 5', 'This is a description of the book.', '9781234567894', '2015-03-10 11:00:00', 'IT', 'TH', 5);
-INSERT INTO Books (Name, Description, ISBN, LanguageID, GenreID, UserUploaderID) VALUES ('Book 6', 'This is a description of the book.', '9781234567895', 'PT', 'HO', 6);
-INSERT INTO Books (Name, Description, ISBN, LanguageID, GenreID, UserUploaderID) VALUES ('Book 7', 'This is a description of the book.', '9781234567896', 'RU', 'AD', 7);
-INSERT INTO Books (Name, Description, ISBN, LanguageID, GenreID, UserUploaderID) VALUES ('Book 8', 'This is a description of the book.', '9781234567897', 'JP', 'HF', 8);
+INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 1', 'This is a description of the book.', '9781234567890', '2025-02-09 10:00:00', 'EN', 'FA', 1, 10);
+INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 2', 'This is a description of the book.', '9781234567891', '2005-06-15 09:00:00', 'ES', 'SF', 2, 12);
+INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 3', 'This is a description of the book.', '9781234567892', '2010-11-22 10:00:00', 'FR', 'MY', 3, 14);
+INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 4', 'This is a description of the book.', '9781234567893', '2018-01-01 08:00:00', 'DE', 'RO', 4, 16);
+INSERT INTO Books (Name, Description, ISBN, PublishedBookDate, LanguageID, GenreID, UserUploaderID) VALUES ('Book 5', 'This is a description of the book.', '9781234567894', '2015-03-10 11:00:00', 'IT', 'TH', 5, 18);
+INSERT INTO Books (Name, Description, ISBN, LanguageID, GenreID, UserUploaderID) VALUES ('Book 6', 'This is a description of the book.', '9781234567895', 'PT', 'HO', 6, 20);
+INSERT INTO Books (Name, Description, ISBN, LanguageID, GenreID, UserUploaderID) VALUES ('Book 7', 'This is a description of the book.', '9781234567896', 'RU', 'AD', 7, 22);
+INSERT INTO Books (Name, Description, ISBN, LanguageID, GenreID, UserUploaderID) VALUES ('Book 8', 'This is a description of the book.', '9781234567897', 'JP', 'HF', 8, 24);
 
 
 INSERT INTO Communities (BookID, UserAuthorID, Title, Description)

@@ -129,7 +129,7 @@ create procedure Books_Insert(
     @LanguageID char(2),
     @GenreID char(2),
     @UserUploaderID int,
-	@Stock
+	@Stock int
 )as
 begin
     begin try
