@@ -190,7 +190,6 @@ BEGIN
 END;
 GO
 
-
 drop procedure if exists sp_restore_mybook;
 go
 create procedure sp_restore_mybook
