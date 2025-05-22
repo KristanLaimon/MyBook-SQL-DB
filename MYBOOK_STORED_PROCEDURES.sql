@@ -2,7 +2,9 @@
 
 use MYBOOK;
 
-drop procedure if exists Suscriptions_Insert; go
+drop procedure if exists Suscriptions_Insert; 
+go
+
 create procedure Suscriptions_Insert(
     @ID char(2),
     @Name varchar(30),
@@ -11,14 +13,17 @@ create procedure Suscriptions_Insert(
 )as
 begin
     begin try
-        insert into Suscriptions (ID, Name, Description, PriceUSD) values (@ID, @Name, @Description, @PriceUSD);
+        insert into Suscriptions (ID, Name, Description, PriceUSD) 
+		values (@ID, @Name, @Description, @PriceUSD);
     end try
     begin catch
         print 'Subscriptions_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + @ID + ',' + @Name + ',' + @Description + ',' + convert(varchar(10), @PriceUSD);
     end catch
-end go;
+end 
+go
 
-drop procedure if exists Book_user_Reviews_Insert; go
+drop procedure if exists Book_user_Reviews_Insert; 
+go
 create procedure Book_User_Reviews_Insert(
     @BookID int,
     @UserID int,
@@ -32,9 +37,11 @@ begin
     begin catch
         print 'Book_User_Reviews_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @BookID) + ',' + convert(varchar(10), @UserID) + ',' + convert(varchar(10), @Rating) + ',' + @Comment;
     end catch
-end go;
+end
+go
 
-drop procedure if exists Roles_Insert; go
+drop procedure if exists Roles_Insert; 
+go
 create procedure Roles_Insert(
     @ID char(2),
     @Name varchar(20),
@@ -47,9 +54,11 @@ begin
     begin catch
         print 'Roles_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + @ID + ',' + @Name + ',' + convert(varchar(10), @Priority);
     end catch
-end go;
+end 
+go
 
-drop procedure if exists Languages_Insert; go
+drop procedure if exists Languages_Insert; 
+go
 create procedure Languages_Insert(
     @ID char(2),
     @Name varchar(30)
@@ -62,9 +71,11 @@ begin
         print 'Languages_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + @ID + ',' + @Name;
     end catch
 
-end go;
+end 
+go
 
-drop procedure if exists Users_Insert; go;
+drop procedure if exists Users_Insert; 
+go
 create procedure Users_Insert(
     @Name varchar(20),
     @PasswordHash char(64),
@@ -84,9 +95,11 @@ begin
         print 'Users_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + @Name + ',' + @PasswordHash + ',' + @Email + ',' + convert(varchar(1), @IsVerified) + ',' + @RoleID + ',' + @SubscriptionID + ',' + convert(varchar(30), @RenewSuscriptionDate);
     end catch
 
-end go;
+end 
+go
 
-drop procedure if exists Genres_Insert; go
+drop procedure if exists Genres_Insert;
+go
 create procedure Genres_Insert(
     @ID char(2),
     @Name varchar(20)
@@ -98,10 +111,12 @@ begin
     begin catch
         print 'Genres_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + @ID + ',' + @Name;
     end catch
-end go
+end 
+go
 
 
-drop procedure if exists Books_Insert; go
+drop procedure if exists Books_Insert; 
+go
 create procedure Books_Insert(
     @ID int,
     @Name varchar(30),
@@ -123,9 +138,11 @@ begin
     begin catch
         print 'Books_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + @Name + ',' + @Description + ',' + @ISBN + ',' + convert(varchar(10), @Edition) + ',' + convert(varchar(10), @IsVerified) + ',' + convert(varchar(30), @PublishedUploadDate, 120) + ',' + convert(varchar(30), @PublishedBookDate, 120) + ',' + @LanguageID + ',' + @GenreID + ',' + convert(varchar(10), @UserUploaderID);
     end catch
-end go
+end 
+go
 
-drop procedure if exists User_User_Suscribe_Insert; go;
+drop procedure if exists User_User_Suscribe_Insert; 
+go
 create procedure User_User_Suscribe_Insert(
     @SuscriberID int,
     @SuscribedToID int,
@@ -139,10 +156,12 @@ begin
     begin catch
         print 'User_User_Suscribe_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @SuscriberID) + ',' + convert(varchar(10), @SuscribedToID) + ',' + convert(varchar(30), @SuscriptionDate, 120);
     end catch
-end go;
+end 
+go
 
 
-drop procedure if exists Communities_Insert; go;
+drop procedure if exists Communities_Insert; 
+go
 create procedure Communities_Insert(
     @BookID int,
     @UserAuthorID int,
@@ -157,9 +176,11 @@ begin
     begin catch
         print 'Communities_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @BookID) + ',' + convert(varchar(10), @UserAuthorID) + ',' + @Title + ',' + @Description;
     end catch
-end go;
+end
+go
 
-drop procedure if exists Book_User_Shelve_Insert; go
+drop procedure if exists Book_User_Shelve_Insert; 
+go
 create procedure  Book_User_Shelve_Insert(
     @BookID int,
     @UserID int,
@@ -174,9 +195,11 @@ begin
     begin catch
         print 'Book_User_Shelve_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @BookID) + ',' + convert(varchar(10), @UserID) + ',' + convert(varchar(10), @IsFavorite) + ',' + convert(varchar(30), @ShelvedDate, 120);
     end catch
-end go;
+end 
+go
 
-drop procedure if exists Posts_Insert; go
+drop procedure if exists Posts_Insert;
+go
 create procedure  Posts_Insert(
 --     @ID int,
     @DatePosted datetime2,
@@ -194,11 +217,13 @@ begin
     begin catch
         print 'Posts_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(30), @DatePosted, 120) + ',' + convert(varchar(10), @UserPosterID) + ',' + convert(varchar(10), @CommunityID) + ',' + @Content + ',' + @Title;
     end catch
-end go;
+end 
+go
 
 
 
-drop procedure if exists Book_User_Reads_Insert; go
+drop procedure if exists Book_User_Reads_Insert; 
+go
 create procedure Book_User_Reads_Insert(
     @BookID int,
     @UserID int,
@@ -213,9 +238,11 @@ begin
     begin catch
         print 'Book_User_Reads_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @BookID) + ',' + convert(varchar(10), @UserID) + ',' + convert(varchar(20), @ReadTimeMiliseconds) + ',' + convert(varchar(30), @ReadDate, 120);
     end catch
-end go;
+end 
+go
 
-drop procedure if exists Comment_Insert; go
+drop procedure if exists Comment_Insert; 
+go
 create procedure  Comment_Insert(
 --     @ID int (is autoincremental by default
     @UserID int,
@@ -231,9 +258,11 @@ begin
     begin catch
         print 'Comment_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @UserID) + ',' + convert(varchar(10), @PostID) + ',' + @Content + ',' + convert(varchar(10), @ParentCommentID);
     end catch
-end go;
+end
+go
 
-drop procedure if exists User_Community_Follow_Insert; go
+drop procedure if exists User_Community_Follow_Insert; 
+go
 create procedure User_Community_Follow_Insert(
     @UserID int,
     @CommunityID int,
@@ -247,6 +276,7 @@ begin
     begin catch
         print 'User_Community_Follow_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + convert(varchar(10), @UserID) + ',' + convert(varchar(10), @CommunityID) + ',' + convert(varchar(30), @FollowedDate, 120);
     end catch
-end go;
+end
+go
 
 select * from sys.procedures;
