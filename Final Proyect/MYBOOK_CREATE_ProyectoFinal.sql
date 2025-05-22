@@ -12,11 +12,13 @@ create table Orders(
     constraint PK_Orders primary key (ID),-- CREATE CLUSTERED INDEX IDX_Orders_OrderDate ON Orders(OrderDate);
     constraint FK_Orders_Users foreign key (UserID) references Users(ID),
     constraint Check_Orders_Status_MustBeInEnum check(Status in ('pending', 'paid', 'cancelled'))
-); go
+); 
+go
 create nonclustered index NON_IDX_Orders_OrderDate on Orders(OrderDate);
 create nonclustered columnstore index NON_CLU_Orders_Total on Orders(Total);
 
-drop procedure if exists Orders_Insert; go
+drop procedure if exists Orders_Insert; 
+go
 create procedure Orders_Insert(
     @UserID int,
     @OrderDate datetime2,
@@ -36,7 +38,8 @@ begin
             + @Status + ', '
             + cast(@Total as varchar(10));
     end catch
-end go;
+end 
+go
 
 create table Orders_Book_Have(
     OrderID int not null,
@@ -47,12 +50,14 @@ create table Orders_Book_Have(
     constraint Check_OrdersBookHave_Quantity_MustBeGreaterThanZero check (Quantity > 0),
     constraint FK_OrdersBookHave_Orders foreign key (OrderID) references Orders(ID),
     constraint FK_OrdersBookHave_Books foreign key (BookID) references Books(ID)
-); go
+); 
+go
 create nonclustered index NON_IDX_OrdersBookHave_OrderID on Orders_Book_Have(OrderID);
 create nonclustered index NON_IDX_OrdersBookHave_BookID on Orders_Book_Have(BookID);
 create nonclustered columnstore index NON_CLU_OrdersBookHave_Quantity on Orders_Book_Have(Quantity);
 
-drop procedure if exists Orders_Book_Have_Insert; go
+drop procedure if exists Orders_Book_Have_Insert;
+go
 create procedure Orders_Book_Have_Insert(
     @OrderID int,
     @BookID int,
@@ -70,9 +75,11 @@ begin
             + cast(@BookID as varchar(10)) + ', '
             + cast(@Quantity as varchar(10));
     end catch
-end go;
+end 
+go
 
-drop view if exists Sales; go
+drop view if exists Sales;
+go
 create view Sales as
 select ID as OrderInfoID, UserID, OrderDate, Total
 from Orders o
