@@ -12,7 +12,8 @@ GO
 -- Nota: El directorio debe crearse manualmente con los permisos adecuados (te estoy observando linux ehh!)
 
 -- 1. Procedimiento para Respaldo Completo
-drop procedure if exists sp_Backup_Full; go
+drop procedure if exists sp_Backup_Full;
+go
 CREATE PROCEDURE sp_Backup_Full
 AS
 BEGIN
@@ -55,7 +56,8 @@ END;
 GO
 
 -- Procedimiento para Respaldo Diferencial
-drop procedure if exists sp_Backup_Differential; go
+drop procedure if exists sp_Backup_Differential;
+go
 CREATE PROCEDURE sp_Backup_Differential
 AS
 BEGIN
@@ -91,7 +93,8 @@ END;
 GO
 
 -- Procedimiento para Respaldo del Log de Transacciones
-drop procedure if exists sp_Backup_Log; go
+drop procedure if exists sp_Backup_Log;
+go
 CREATE PROCEDURE sp_Backup_Log
 AS
 BEGIN
@@ -135,7 +138,8 @@ RECONFIGURE;
 -- 1. Borrar respaldos completos mayores a 4 semanas
 -- 2. Borrar respaldos diferenciales mayor a 1 semana
 -- 3. borrar respaldos de log mayor a 1 día
-drop procedure if exists sp_Cleanup_Backups; go
+drop procedure if exists sp_Cleanup_Backups;
+go
 CREATE PROCEDURE sp_Cleanup_Backups
 AS
 BEGIN
