@@ -1,5 +1,6 @@
 
 
+
 use MYBOOK;
 
 drop procedure if exists Suscriptions_Insert; 
@@ -127,8 +128,8 @@ create procedure Books_Insert(
     @PublishedBookDate datetime2,
     @LanguageID char(2),
     @GenreID char(2),
-    @UserUploaderID int,
-	@Stock
+    @Stock int,
+    @UserUploaderID int
 )as
 begin
     begin try

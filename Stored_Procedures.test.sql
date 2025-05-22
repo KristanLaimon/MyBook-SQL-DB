@@ -37,9 +37,9 @@ go
 declare @ActualDate datetime2 = GETDATE();
 declare @InTwoDaysDate datetime2 = DATEADD(day, 2, @ActualDate);
 declare @InThreeDaysDate datetime2 = DATEADD(day, 3, @Actualdate);
-exec Books_Insert 1, 'Book one', 'This is the first book', '9781234567890', 1, 1, @ActualDate, @ActualDate, 'EN', 'FA', 1, 10;
-exec Books_Insert 2, 'Book two', 'This is the second book', '9781234567891', 2, 0, @ActualDate, @InTwoDaysDate, 'ES', 'SF', 2, 20
-exec Books_Insert 3, 'Book three', 'This is the third book', '9781234567892', 3, 1, @InTwoDaysDate, @InThreeDaysDate, 'FR', 'MY', 3, 30;
+exec Books_Insert  'Book one', 'This is the first book', '9781234567890', 1, 1, @ActualDate, @ActualDate, 'EN', 'FA', 1, 10;
+exec Books_Insert  'Book two', 'This is the second book', '9781234567891', 2, 0, @ActualDate, @InTwoDaysDate, 'ES', 'SF', 2, 20
+exec Books_Insert  'Book three', 'This is the third book', '9781234567892', 3, 1, @InTwoDaysDate, @InThreeDaysDate, 'FR', 'MY', 3, 30;
 go
 
 declare @ActualDate datetime2 = getdate();
@@ -49,9 +49,9 @@ exec User_User_Suscribe_Insert 5, 6, @ActualDate;
 go
 
 declare @Date datetime2 = getdate();
-exec Books_Insert 1, 'Test Book One', 'Description for Test Book One', '9781111111111', 1, 1, @Date, @Date, 'EN', 'FA', 1;
-exec Books_Insert 2, 'Test Book Two', 'Description for Test Book Two', '9782222222222', 1, 0, @Date, @Date, 'ES', 'SF', 2;
-exec Books_Insert 3, 'Test Book Three', 'Description for Test Book Three', '9783333333333', 1, 1, @Date, @Date, 'FR', 'MY', 3;
+exec Books_Insert 'Test Book One', 'Description for Test Book One', '9781111111111', 1, 1, @Date, @Date, 'EN', 'FA', 1;
+exec Books_Insert  'Test Book Two', 'Description for Test Book Two', '9782222222222', 1, 0, @Date, @Date, 'ES', 'SF', 2;
+exec Books_Insert  'Test Book Three', 'Description for Test Book Three', '9783333333333', 1, 1, @Date, @Date, 'FR', 'MY', 3;
 
 declare @ActualDate datetime2 = GETDATE();
 exec Book_User_Shelve_Insert 1, 2, 1, @ActualDate;
