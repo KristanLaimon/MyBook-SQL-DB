@@ -1,3 +1,4 @@
+
 USE MYBOOK;
 
 -- Consulta 1: Ventas totales por mes para productos específicos (Libros)
