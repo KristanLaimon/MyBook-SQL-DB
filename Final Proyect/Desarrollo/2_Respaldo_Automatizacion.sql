@@ -18,15 +18,15 @@
 -- 128 = Cuando la computadora está inactiva
 use mybook;
 
--- =============  1. JOB DIARIO: Crear backup DIFERENCIAL Y DE LOGS/TRANSACCIONES diario una vez a las 02:00 AM  ========================
-IF EXISTS (SELECT * FROM msdb.dbo.sysjobs WHERE name = N'Backup_Differential_And_Log_Daily')
-    EXEC msdb.dbo.sp_delete_job @job_name = N'Backup_Differential_And_Log_Daily';
+-- =============  1. JOB DIARIO: Crear backup DIFERENCIAL diario una vez a las 02:00 AM  ========================
+IF EXISTS (SELECT * FROM msdb.dbo.sysjobs WHERE name = N'Backup_Differential')
+    EXEC msdb.dbo.sp_delete_job @job_name = N'Backup_Differential';
 
 EXEC msdb.dbo.sp_add_job
-     @job_name = N'Backup_Differential_And_Log_Daily';
+     @job_name = N'Backup_Differential';
 
 EXEC msdb.dbo.sp_add_jobstep
-     @job_name = N'Backup_Differential_And_Log_Daily',
+     @job_name = N'Backup_Differential',
      @step_name = N'Backup Differential',
      @subsystem = N'TSQL',
      @command = N'EXEC sp_Backup_Differential;',
@@ -34,7 +34,7 @@ EXEC msdb.dbo.sp_add_jobstep
      @retry_interval = 5;
 
 EXEC msdb.dbo.sp_add_jobstep
-     @job_name = N'Backup_Differential_And_Log_Daily',
+     @job_name = N'Backup_Differential',
      @step_name = N'Backup de logs',
      @subsystem = N'TSQL',
      @command = N'EXEC sp_Backup_Log;',
@@ -42,14 +42,50 @@ EXEC msdb.dbo.sp_add_jobstep
      @retry_interval = 5;
 
 EXEC msdb.dbo.sp_add_schedule
-     @schedule_name = N'Diario a las 2 AM',
+     @schedule_name = N'Diario a las 2 AM DIFERENCIAL',
      @freq_type = 4,            -- Diario
      @freq_interval = 1,        -- Cada 1 día
      @active_start_time = 020000; -- 02:00 AM
 
 EXEC msdb.dbo.sp_attach_schedule
-     @job_name = N'Backup_Differential_And_Log_Daily',
-     @schedule_name = N'Diario a las 2 AM';
+     @job_name = N'Backup_Differential',
+     @schedule_name = N'Diario a las 2 AM DIFERENCIAL';
+
+-- Add a new job server
+EXEC msdb.dbo.sp_add_jobserver
+    @job_name = N'Backup_Differential',
+    @server_name = N'(local)';
+
+-- =============  1. JOB DIARIO: Crear backup DE LOGS/TRANSACCIONES diario una vez a las 02:00 AM  ========================
+
+IF EXISTS (SELECT * FROM msdb.dbo.sysjobs WHERE name = N'Backup_Logs')
+    EXEC msdb.dbo.sp_delete_job @job_name = N'Backup_Logs';
+
+EXEC msdb.dbo.sp_add_job
+     @job_name = N'Backup_Logs';
+
+EXEC msdb.dbo.sp_add_jobstep
+     @job_name = N'Backup_Logs',
+     @step_name = N'Backup de logs',
+     @subsystem = N'TSQL',
+     @command = N'EXEC sp_Backup_Log;',
+     @retry_attempts = 3,
+     @retry_interval = 5;
+
+EXEC msdb.dbo.sp_add_schedule
+     @schedule_name = N'Diario a las 2 AM LOGS',
+     @freq_type = 4,            -- Diario
+     @freq_interval = 1,        -- Cada 1 día
+     @active_start_time = 020000; -- 02:00 AM
+
+EXEC msdb.dbo.sp_attach_schedule
+     @job_name = N'Backup_Logs',
+     @schedule_name = N'Diario a las 2 AM LOGS';
+
+-- Add a new job server
+EXEC msdb.dbo.sp_add_jobserver
+     @job_name = N'Backup_Logs',
+     @server_name = N'(local)';
 
 
 -- ============= 1. JOB SEMANAL: Crear backup FULL semanal los domingos a las 3 AM ========================
@@ -89,6 +125,10 @@ EXEC msdb.dbo.sp_add_schedule
 EXEC msdb.dbo.sp_attach_schedule
      @job_name = N'Backup_Full_Weekly',
      @schedule_name = N'Semanal Domingo 03:00 AM';
+
+EXEC msdb.dbo.sp_add_jobserver
+     @job_name = N'Backup_Full_Weekly',
+     @server_name = N'(local)';
 
 
 

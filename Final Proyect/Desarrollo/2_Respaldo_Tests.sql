@@ -45,9 +45,17 @@ use mybook;
 use mybook;
 -- Para checar  si está activo el server agente (el que ejecuta los jobs con sus schedules)
 EXEC xp_servicecontrol 'QUERYSTATE', 'SQLServerAgent';
+-- Enable SQL Server Agent to activate jobs on the server
 
 -- Con esto se inicia un job (testeo)
+EXEC msdb.dbo.sp_start_job @job_name = N'Backup_Differential';
+EXEC msdb.dbo.sp_start_job @job_name = N'Backup_Logs';
 EXEC msdb.dbo.sp_start_job @job_name = N'Backup_Full_Weekly';
+
+-- Stop all current jobs
+EXEC msdb.dbo.sp_stop_job @job_name = N'Backup_Differential';
+EXEC msdb.dbo.sp_stop_job @job_name = N'Backup_Logs';
+EXEC msdb.dbo.sp_stop_job @job_name = N'Backup_Full_Weekly';
 
 
 -- Get latest 10 job runs (customize as needed)
