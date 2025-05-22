@@ -128,12 +128,13 @@ create procedure Books_Insert(
     @PublishedBookDate datetime2,
     @LanguageID char(2),
     @GenreID char(2),
-    @UserUploaderID int
+    @UserUploaderID int,
+	@Stock
 )as
 begin
     begin try
-        insert into Books (Name, Description, ISBN, Edition, IsVerified, PublishedUploadDate, PublishedBookDate, LanguageID, GenreID, UserUploaderID)
-        values (@Name, @Description, @ISBN, @Edition, @IsVerified, @PublishedUploadDate, @PublishedBookDate, @LanguageID, @GenreID, @UserUploaderID);
+        insert into Books (Name, Description, ISBN, Edition, IsVerified, PublishedUploadDate, PublishedBookDate, LanguageID, GenreID, UserUploaderID, Stock)
+        values (@Name, @Description, @ISBN, @Edition, @IsVerified, @PublishedUploadDate, @PublishedBookDate, @LanguageID, @GenreID, @UserUploaderID, @Stock);
     end try
     begin catch
         print 'Books_Insert | ERROR | MSG: ' + error_message() + ' | Values: ' + @Name + ',' + @Description + ',' + @ISBN + ',' + convert(varchar(10), @Edition) + ',' + convert(varchar(10), @IsVerified) + ',' + convert(varchar(30), @PublishedUploadDate, 120) + ',' + convert(varchar(30), @PublishedBookDate, 120) + ',' + @LanguageID + ',' + @GenreID + ',' + convert(varchar(10), @UserUploaderID);

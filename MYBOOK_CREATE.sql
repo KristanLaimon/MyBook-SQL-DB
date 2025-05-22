@@ -97,6 +97,7 @@ CREATE TABLE Books ( -- =======================================================
     LanguageID CHAR(2) NOT NULL,
     GenreID CHAR(2) NOT NULL,
     UserUploaderID INT NOT NULL,
+	Stock INT DEFAULT 0 NOT NULL,
 
     CONSTRAINT CK_Book_Name CHECK (LEN(Name) > 0),
     CONSTRAINT CK_Book_Description CHECK (LEN(Description) > 0),
