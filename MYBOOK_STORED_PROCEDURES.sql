@@ -1,5 +1,6 @@
 
 
+
 use MYBOOK;
 
 drop procedure if exists Suscriptions_Insert; 
@@ -118,7 +119,6 @@ go
 drop procedure if exists Books_Insert; 
 go
 create procedure Books_Insert(
-    @ID int,
     @Name varchar(30),
     @Description varchar(400),
     @ISBN char(13),
