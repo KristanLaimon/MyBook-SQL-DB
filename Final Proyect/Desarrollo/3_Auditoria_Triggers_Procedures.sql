@@ -9,17 +9,17 @@ IF OBJECT_ID('dbo.Audit_Events', 'U') IS NOT NULL
 GO
 
 CREATE TABLE dbo.Audit_Events (
-      AuditID INT IDENTITY(1,1) PRIMARY KEY,
-      EventTime DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-      EventType NVARCHAR(128),
-      LoginName NVARCHAR(128),
-      ObjectName NVARCHAR(128),
-      Statement NVARCHAR(MAX),
-      DatabaseName NVARCHAR(128),
-      SchemaName NVARCHAR(128),
-      SessionID INT,
-      Success BIT,
-      ErrorMessage NVARCHAR(4000)
+    AuditID      INT IDENTITY(1,1) PRIMARY KEY,           -- Identificador �nico de cada evento
+    EventTime    DATETIME2 NOT NULL DEFAULT SYSDATETIME(),-- Fecha y hora del evento
+    EventType    NVARCHAR(128),                          -- Tipo de evento: INSERT, UPDATE o DELETE
+    LoginName    NVARCHAR(128),                          -- Usuario que ejecut� la acci�n
+    ObjectName   NVARCHAR(128),                          -- Tabla sobre la que se actu�
+    Statement    NVARCHAR(MAX),                          -- Comando SQL exacto que dispar� el trigger
+    DatabaseName NVARCHAR(128),                          -- Nombre de la base de datos (MYBOOK)
+    SchemaName   NVARCHAR(128),                          -- Esquema de la tabla auditada (normalmente dbo)
+    SessionID    INT,                                     -- ID de sesi�n de SQL Server (@@SPID)
+    Success      BIT,                                     -- 1=�xito (trigger complet� sin error)
+    ErrorMessage NVARCHAR(4000)                           -- Mensaje de error si hubo fallo
 );
 GO
 

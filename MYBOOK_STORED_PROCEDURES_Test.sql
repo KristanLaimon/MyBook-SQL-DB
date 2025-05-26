@@ -49,9 +49,9 @@ exec User_User_Suscribe_Insert 5, 6, @ActualDate;
 go
 
 declare @Date datetime2 = getdate();
-exec Books_Insert 'Test Book One', 'Description for Test Book One', '9781111111111', 1, 1, @Date, @Date, 'EN', 'FA', 1, 0;
-exec Books_Insert  'Test Book Two', 'Description for Test Book Two', '9782222222222', 1, 0, @Date, @Date, 'ES', 'SF', 2, 0;
-exec Books_Insert  'Test Book Three', 'Description for Test Book Three', '9783333333333', 1, 1, @Date, @Date, 'FR', 'MY', 3, 0;
+exec Books_Insert 'Test Book One', 'Description for Test Book One', '9781111111111', 1, 1, @Date, @Date, 'EN', 'FA', 1, 4;
+exec Books_Insert  'Test Book Two', 'Description for Test Book Two', '9782222222222', 1, 0, @Date, @Date, 'ES', 'SF', 2, 5;
+exec Books_Insert  'Test Book Three', 'Description for Test Book Three', '9783333333333', 1, 1, @Date, @Date, 'FR', 'MY', 3, 6;
 
 declare @ActualDate datetime2 = GETDATE();
 exec Book_User_Shelve_Insert 1, 2, 1, @ActualDate;
