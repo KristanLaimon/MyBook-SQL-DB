@@ -103,3 +103,48 @@ INSERT INTO Orders_Book_Have (OrderID, BookID, Quantity) VALUES (38, 1, 1);
 INSERT INTO Orders_Book_Have (OrderID, BookID, Quantity) VALUES (39, 2, 2);
 INSERT INTO Orders_Book_Have (OrderID, BookID, Quantity) VALUES (40, 3, 2);
 INSERT INTO Orders_Book_Have (OrderID, BookID, Quantity) VALUES (40, 4, 1);
+
+
+-- ORDERS
+DECLARE @i INT = 1;
+DECLARE @uid INT;
+DECLARE @status VARCHAR(20);
+DECLARE @date DATETIME2;
+DECLARE @rand DECIMAL(10,2);
+
+WHILE @i <= 10000
+BEGIN
+    SET @uid = ((@i - 1) % 10000) + 1;
+    SET @status = CHOOSE((@i % 3) + 1, 'pending', 'paid', 'cancelled');
+    SET @date = DATEADD(DAY, @i % 365, '2024-01-01');
+    SET @rand = ROUND((RAND(CHECKSUM(NEWID())) * 100) + 10, 2);  -- Generate a pseudo-random total between 10 and 110
+
+    EXEC Orders_Insert 
+        @UserID = @uid, 
+        @OrderDate = @date, 
+        @Status = @status, 
+        @Total = @rand;
+
+    SET @i += 1;
+END;
+go
+
+-- ORDERS_BOOK_HAVE
+DECLARE @j INT = 1;
+DECLARE @order INT;
+DECLARE @book INT;
+DECLARE @qty INT;
+
+WHILE @j <= 10000
+BEGIN
+    SET @order = ((@j - 1) % 10000) + 1;
+    SET @book = ((@j - 1) % 1000) + 1; -- Assuming you have at least 1000 books
+    SET @qty = (ABS(CHECKSUM(NEWID())) % 5) + 1; -- 1 to 5 copies
+
+    EXEC Orders_Book_Have_Insert @OrderID = @order, @BookID = @book, @Quantity = @qty;
+
+    SET @j += 1;
+END;
+go
+
+select *  from Orders order by Total desc;

@@ -56,7 +56,7 @@ EXEC msdb.dbo.sp_add_jobserver
     @job_name = N'Backup_Differential',
     @server_name = N'(local)';
 
--- =============  1. JOB DIARIO: Crear backup DE LOGS/TRANSACCIONES diario una vez a las 02:00 AM  ========================
+-- =============  2. JOB DIARIO: Crear backup DE LOGS/TRANSACCIONES diario una vez a las 02:00 AM  ========================
 
 IF EXISTS (SELECT * FROM msdb.dbo.sysjobs WHERE name = N'Backup_Logs')
     EXEC msdb.dbo.sp_delete_job @job_name = N'Backup_Logs';
@@ -88,7 +88,7 @@ EXEC msdb.dbo.sp_add_jobserver
      @server_name = N'(local)';
 
 
--- ============= 1. JOB SEMANAL: Crear backup FULL semanal los domingos a las 3 AM ========================
+-- ============= 3. JOB SEMANAL: Crear backup FULL semanal los domingos a las 3 AM ========================
 IF EXISTS (SELECT * FROM msdb.dbo.sysjobs WHERE name = N'Backup_Full_Weekly')
     EXEC msdb.dbo.sp_delete_job @job_name = N'Backup_Full_Weekly';
 

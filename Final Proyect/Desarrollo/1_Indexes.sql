@@ -1,6 +1,5 @@
 
-USE MYBOOK;
-
+use mybook;
 -- Consulta 1: Ventas totales por mes para productos específicos (Libros)
 -- Utiliza el índice columnstore NON_CLU_Orders_Total para agregaciones y el índice no agrupado NON_IDX_Orders_OrderDate para filtrado de fechas
 SELECT
@@ -17,7 +16,7 @@ ORDER BY AñoVenta, MesVenta, NombreLibro;
 
 -- Consulta 2: Clientes que han pedido productos de una categoría específica (Género) en un año determinado
 -- Utiliza el índice no agrupado NON_IDX_Orders_OrderDate y NON_IDX_OrdersBookHave_BookID para uniones eficientes
-DECLARE @Year INT = 2025;
+DECLARE @Year INT = 2024;
 DECLARE @GenreID CHAR(2) = 'FA'; -- Ejemplo: Género Fantasía
 SELECT DISTINCT
     u.Name AS NombreUsuario,
@@ -35,8 +34,8 @@ ORDER BY u.Name;
 
 -- Consulta 3: Clientes con pedidos realizados en un rango de fechas específico
 -- Utiliza el índice no agrupado NON_IDX_Orders_OrderDate para filtrado de rango de fechas
-DECLARE @StartDate DATETIME2 = '2025-01-01';
-DECLARE @EndDate DATETIME2 = '2025-12-31';
+DECLARE @StartDate DATETIME2 = '2024-11-24';
+DECLARE @EndDate DATETIME2 = '2024-11-25';
 SELECT DISTINCT
     u.Name AS NombreUsuario,
     u.Email AS Correo,
@@ -47,9 +46,11 @@ WHERE o.OrderDate BETWEEN @StartDate AND @EndDate
   AND o.Status = 'paid'
 GROUP BY u.Name, u.Email
 ORDER BY u.Name;
-
+go 
 -- Consulta 4: Productos que no han sido pedidos en un rango de fechas específico
 -- Utiliza los índices no agrupados NON_IDX_OrdersBookHave_BookID y NON_IDX_Orders_OrderDate
+DECLARE @StartDate DATETIME2 = '2024-11-24';
+DECLARE @EndDate DATETIME2 = '2024-11-25';
 SELECT
     b.Name AS NombreLibro,
     b.ISBN
@@ -124,6 +125,5 @@ SELECT
 FROM Communities c
          INNER JOIN Books b ON c.BookID = b.ID
          INNER JOIN Posts p ON c.BookID = p.CommunityID
-WHERE p.DatePosted >= DATEADD(MONTH, -12, GETDATE())
 GROUP BY c.Title, b.Name
 ORDER BY CantidadPublicaciones DESC;

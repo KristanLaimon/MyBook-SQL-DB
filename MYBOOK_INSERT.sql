@@ -153,3 +153,159 @@ VALUES
     (6, 6, DATEADD(YEAR, 10, GETDATE())),
     (7, 7, DATEADD(YEAR, 10, GETDATE())),
     (8, 8, DATEADD(YEAR, 10, GETDATE()));
+
+
+-- ====================== 10K Registries processing ==============================
+-- USERS
+DECLARE @i INT = 1;
+WHILE @i <= 10000
+    BEGIN
+        INSERT INTO Users (Name, PasswordHash, Email, IsVerified, RoleID, SubscriptionID, RenewSuscriptionDate)
+        VALUES (
+                   CONCAT('User', @i),
+                   CONVERT(CHAR(64), HASHBYTES('SHA2_256', CONCAT('password', @i)), 2),
+                   CONCAT('user', @i, '@example.com'),
+                   CASE WHEN @i % 2 = 0 THEN 1 ELSE 0 END,
+                   (SELECT TOP 1 ID FROM Roles ORDER BY NEWID()),
+                   (SELECT TOP 1 ID FROM Suscriptions ORDER BY NEWID()),
+                   DATEADD(DAY, @i % 365, '2025-01-01')
+               );
+        SET @i += 1;
+    END;
+go
+
+-- BOOKS
+DECLARE @i INT = 1;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO Books (Name, Description, ISBN, Edition, IsVerified, PublishedUploadDate, PublishedBookDate, LanguageID, GenreID, UserUploaderID, Stock)
+    VALUES (
+        CONCAT('Book ', @i),
+        'Auto-generated book description',
+        CONCAT('978123', FORMAT(@i, '0000000')),
+        1,
+        1,
+        GETDATE(),
+        DATEADD(DAY, -@i % 1000, GETDATE()),
+        (SELECT TOP 1 ID FROM Languages ORDER BY NEWID()),
+        (SELECT TOP 1 ID FROM Genres ORDER BY NEWID()),
+        ((@i - 1) % 10000) + 1,
+        ABS(CHECKSUM(NEWID()) % 100)
+    );
+    SET @i += 1;
+END;
+go
+
+DECLARE @i INT = 9;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO Communities (BookID, UserAuthorID, Title, Description)
+    VALUES (
+        @i,
+        ((@i - 1) % 10000) + 1,
+        CONCAT('Community ', @i),
+        'Auto-generated description for community.'
+    );
+    SET @i += 1;
+END;
+go
+
+DECLARE @i INT = 1;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO Posts (UserPosterID, CommunityID, Content, Title)
+    VALUES (
+        ((@i - 1) % 10000) + 1,
+        ((@i - 1) % 10000) + 1,
+        CONCAT('This is post content #', @i),
+        CONCAT('Post ', @i)
+    );
+    SET @i += 1;
+END;
+go
+
+DECLARE @i INT = 10;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO Comment (UserID, Content, PostID, ParentCommentID)
+    VALUES (
+        ((@i - 1) % 10000) + 1,
+        CONCAT('Comment number ', @i),
+        CASE WHEN @i % 2 = 0 THEN ((@i - 1) % 10000) + 1 ELSE NULL END,
+        CASE WHEN @i % 2 = 1 THEN ((@i - 2) % 10000) + 1 ELSE NULL END
+    );
+    SET @i += 1;
+END;
+go
+
+DECLARE @i INT = 15;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO Book_User_Shelve (BookID, UserID, IsFavorite)
+    VALUES (
+        ((@i - 1) % 10000) + 1,
+        ((@i - 1) % 10000) + 1,
+        @i % 2
+    );
+    SET @i += 1;
+END;
+go
+
+DECLARE @i INT = 9;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO Book_User_Reads (BookID, UserID, ReadTimeMiliseconds)
+    VALUES (
+        ((@i - 1) % 10000) + 1,
+        ((@i - 1) % 10000) + 1,
+        ABS(CHECKSUM(NEWID()) % 60000) + 1000
+    );
+    SET @i += 1;
+END;
+go
+
+DECLARE @i INT = 9;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO Book_User_Reviews (BookID, UserID, Rating, Comment)
+    VALUES (
+        ((@i - 1) % 10000) + 1,
+        ((@i - 1) % 10000) + 1,
+        @i % 6,
+        CONCAT('Review for book ', @i)
+    );
+    SET @i += 1;
+END;
+go
+
+DECLARE @i INT = 9;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO User_Community_Follow (UserID, CommunityID, FollowedDate)
+    VALUES (
+        ((@i - 1) % 10000) + 1,
+        ((@i - 1) % 10000) + 1,
+        DATEADD(DAY, @i % 365, GETDATE())
+    );
+    SET @i += 1;
+END;
+go
+
+DECLARE @i INT = 2;
+WHILE @i <= 10000
+BEGIN
+    DECLARE @subFrom INT = ((@i - 1) % 10000) + 1;
+    DECLARE @subTo INT = ((@i * 2 - 1) % 10000) + 1;
+
+    IF @subFrom <> @subTo
+    BEGIN
+        INSERT INTO User_User_Suscribe (SuscriberID, SuscribedToID)
+        VALUES (@subFrom, @subTo);
+    END
+
+    SET @i += 1;
+END;
+go
+
+
+select * from Users;

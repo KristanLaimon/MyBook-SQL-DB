@@ -1,6 +1,6 @@
 ﻿
 
-
+use master;
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'MYBOOK')
   BEGIN
       CREATE DATABASE MYBOOK;
@@ -243,3 +243,4 @@ CREATE TABLE User_User_Suscribe( -- ============================================
 );
 create nonclustered index NON_IDX_UserUserSuscribe_SuscriptionDate on User_User_Suscribe (SuscriptionDate);
 --#endregion
+use master;

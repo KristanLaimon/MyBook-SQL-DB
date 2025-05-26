@@ -9,17 +9,17 @@ IF OBJECT_ID('dbo.Audit_Events', 'U') IS NOT NULL
 GO
 
 CREATE TABLE dbo.Audit_Events (
-                                  AuditID INT IDENTITY(1,1) PRIMARY KEY,
-                                  EventTime DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-                                  EventType NVARCHAR(128),
-                                  LoginName NVARCHAR(128),
-                                  ObjectName NVARCHAR(128),
-                                  Statement NVARCHAR(MAX),
-                                  DatabaseName NVARCHAR(128),
-                                  SchemaName NVARCHAR(128),
-                                  SessionID INT,
-                                  Success BIT,
-                                  ErrorMessage NVARCHAR(4000)
+      AuditID INT IDENTITY(1,1) PRIMARY KEY,
+      EventTime DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+      EventType NVARCHAR(128),
+      LoginName NVARCHAR(128),
+      ObjectName NVARCHAR(128),
+      Statement NVARCHAR(MAX),
+      DatabaseName NVARCHAR(128),
+      SchemaName NVARCHAR(128),
+      SessionID INT,
+      Success BIT,
+      ErrorMessage NVARCHAR(4000)
 );
 GO
 
