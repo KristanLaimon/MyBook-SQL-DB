@@ -1,6 +1,5 @@
 
 
-
 -- Cambiar al contexto de la base de datos master
 USE master;
 GO
@@ -55,7 +54,7 @@ BEGIN TRY
          'UsuarioAuditoria', @pwd, 'auditoria@ejemplo.com', 0, 'VW', 'TP', '2025-12-01';
 
     EXEC dbo.Books_Insert
-         N'Libro Auditoría', N'Prueba auditoría', '9781234567899', 1, 0, @fecha, '2025-05-21', 'EN', 'FA', 1;
+         N'Libro Auditoría', N'Prueba auditoría', '9781234367892', 1, 0, @fecha, '2025-05-21', 'EN', 'FA', 1, 10;
 
     PRINT 'Inserciones de prueba completadas.';
 END TRY

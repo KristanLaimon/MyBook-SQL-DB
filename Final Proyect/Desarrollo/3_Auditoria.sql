@@ -1,8 +1,6 @@
 -- Ensure the audit folder exists: C:\SQLAuditLogs\
 -- Note: This must be created manually on the server with appropriate permissions for SQL Server.
 
-
-
 USE master;
 GO
 

@@ -1,9 +1,8 @@
 
 use MYBOOK;
-
-DROP TRIGGER IF EXISTS trg_UpdateStock_OnPaid
 go
-CREATE TRIGGER trg_UpdateStock_OnPaid
+
+CREATE OR ALTER TRIGGER trg_UpdateStock_OnPaid
 ON Orders
 AFTER UPDATE
 AS

@@ -1,3 +1,5 @@
+-- Se requiere: C:Backups\\MYBOOK
+
 
 -- NOTA: SQL SERVER EXPRESS NO TIENE SQL AGENT, por lo que no se puede correr los jobs aquí...
 -- Source: https://learn.microsoft.com/en-us/answers/questions/890726/sql-server-agent-not-appearing-in-management-studi
@@ -16,6 +18,7 @@
 -- 32 = Mensual relativo (Ejemplo: tercer lunes del mes)
 -- 64 = Al iniciar el agente de SQL Server
 -- 128 = Cuando la computadora está inactiva
+
 use mybook;
 
 -- =============  1. JOB DIARIO: Crear backup DIFERENCIAL diario una vez a las 02:00 AM  ========================
@@ -33,13 +36,13 @@ EXEC msdb.dbo.sp_add_jobstep
      @retry_attempts = 3,
      @retry_interval = 5;
 
-EXEC msdb.dbo.sp_add_jobstep
-     @job_name = N'Backup_Differential',
-     @step_name = N'Backup de logs',
-     @subsystem = N'TSQL',
-     @command = N'EXEC sp_Backup_Log;',
-     @retry_attempts = 3,
-     @retry_interval = 5;
+--EXEC msdb.dbo.sp_add_jobstep
+--     @job_name = N'Backup_Differential',
+--     @step_name = N'Backup de logs',
+--     @subsystem = N'TSQL',
+--     @command = N'EXEC sp_Backup_Log;',
+--     @retry_attempts = 3,
+--     @retry_interval = 5;
 
 EXEC msdb.dbo.sp_add_schedule
      @schedule_name = N'Diario a las 2 AM DIFERENCIAL',

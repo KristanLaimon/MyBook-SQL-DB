@@ -147,4 +147,3 @@ BEGIN
 END;
 go
 
-select *  from Orders order by Total desc;

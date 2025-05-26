@@ -15,7 +15,7 @@ exec sp_Backup_Differential
 
 -- 4. Restaurar utilizando los respaldos más recientes a una hora especifica (gracias a los LOGS)
 use master;
-    exec sp_restore_mybook @point_in_time = '2025-05-21 15:30:00';
+    exec sp_restore_mybook @point_in_time = '2025-05-25 20:00:00';
 use mybook;
 
 -- Prueba: Borrado y restauración
